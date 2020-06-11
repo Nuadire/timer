@@ -1,0 +1,1 @@
+{"version":3,"sources":["app.scss"],"names":[],"mappings":"AAAA,UACI,qBAAuB,CACvB,WAAY,CACZ,YAAa","file":"main.a735d47d.chunk.css","sourcesContent":[".blackBox {\r\n    background-color: black;\r\n    width: 100px;\r\n    height: 100px;\r\n}"]}
