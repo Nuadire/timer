@@ -1,8 +1,7 @@
 import React from "react";
 import './app.scss';
 
-const testError= 1;
-
+a
 const App = () => {
   return <div className="blackBox" />;
 };
