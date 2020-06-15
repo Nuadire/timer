@@ -14,8 +14,8 @@
     "react-scripts": "3.4.1"
   },
   "scripts": {
-    "lint": "eslint ./src --ext .jsx",
-    "lint:fix": "eslint ./src --fix --color --ext .jsx",
+    "lint": "eslint --ext .jsx,.js src/" ,
+    "lint:write": "eslint  --fix --color --ext .jsx,.js ./src/",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -56,11 +56,6 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  },
-  "lint-staged": {
-    "*(.js|.jsx)": [
-      "npm run lint:fix",
-      "git add"
-    ]
   }
+
 }
