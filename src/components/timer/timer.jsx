@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "antd";
 import "./timer.scss";
 
-class Timer extends React.Component {
+export class Timer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -74,4 +74,3 @@ class Timer extends React.Component {
     );
   }
 }
-export default Timer;

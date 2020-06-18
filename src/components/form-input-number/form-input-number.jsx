@@ -4,7 +4,7 @@ import { InputNumber, Slider} from "antd";
 import "./form-input-number.scss";
 import PropTypes from 'prop-types';
 
-const FormInputNumber = (props) => {
+export const FormInputNumber = (props) => {
   const {
     onChangeMin,
     onChangeSec,
@@ -67,5 +67,3 @@ FormInputNumber.propTypes = {
   minute: PropTypes.number,
   second: PropTypes.number
 }
-
-export default FormInputNumber;

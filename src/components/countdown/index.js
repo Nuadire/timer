@@ -1,3 +1,1 @@
-import Countdown from './countdown';
-
-export default Countdown;
+export { Countdown } from "./countdown";

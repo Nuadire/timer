@@ -1,3 +1,1 @@
-import FormInputNumber from './form-input-number';
-
-export default FormInputNumber;
+export { FormInputNumber } from "./form-input-number";

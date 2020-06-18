@@ -4,7 +4,7 @@ import "./view-progress.scss"
 import PropTypes from 'prop-types';
 
 
-const ViewProgress = (props) => {
+export const ViewProgress = (props) => {
   const { minute, second, percent } = props;
   
   return (
@@ -26,5 +26,3 @@ ViewProgress.propTypes = {
     second: PropTypes.number,
     percent: PropTypes.number
 }
-
-export default ViewProgress;
