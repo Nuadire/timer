@@ -4,20 +4,15 @@ import { Button } from "antd";
 import FormInputNumber from "../form-input-number";
 import ViewProgress from "../view-progress/view-progress";
 
-
 class Countdown extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      totalValue: 0,
+      srcTotalTime: 0,
+      totalTime: 0,
       saveTime: 0,
-      srcMinute: 0,
-      srcSecond: 0,
-      minute: 0,
-      second: 0,
-      percent: 0,
       isActive: false,
-      startTime: 0,
+      startTime: 0
     };
   }
 
@@ -25,42 +20,35 @@ class Countdown extends React.Component {
     clearInterval(this.intervalId);
   }
 
-  onChangeSlider = (value) => {
-    const min = Math.trunc(value / 60);
-    const sec = value % 60;
+  onChangeSlider = (seconds) => {
+    const newTime = seconds * 1000;
     this.setState({
-      srcMinute: min,
-      srcSecond: sec,
-      minute: min,
-      second: sec,
-      totalValue: value,
-      percent: 0,
+      totalTime: newTime,
+      srcTotalTime: newTime,
       saveTime: 0,
     });
   };
 
-  onChangeMin = (value) => {
-    if (Number.isNaN(value) || value > 720) return;
-    const { srcSecond } = this.state;
-    const newTotal = value * 60 + srcSecond;
+  onChangeMin = (minuts) => {
+    if (Number.isNaN(minuts) || minuts > 720) return;
+    const { srcTotalTime } = this.state;
+    const second = (srcTotalTime / 1000) % 60;
+    const newTime = (minuts * 60 + second) * 1000;
     this.setState({
-      minute: value,
-      srcMinute: value,
-      totalValue: newTotal,
-      percent: 0,
+      totalTime: newTime,
+      srcTotalTime: newTime,
       saveTime: 0,
     });
   };
 
-  onChangeSec = (value) => {
-    if (Number.isNaN(value) || value > 59) return;
-    const { srcMinute } = this.state;
-    const newTotal = srcMinute * 60 + value;
+  onChangeSec = (second) => {
+    if (Number.isNaN(second) || second > 59) return;
+    const { srcTotalTime } = this.state;
+    const secondOld = (srcTotalTime / 1000) % 60;
+    const newSrcTotalTime = srcTotalTime + (second - secondOld) * 1000;
     this.setState({
-      second: value,
-      srcSecond: value,
-      totalValue: newTotal,
-      percent: 0,
+      totalTime: newSrcTotalTime,
+      srcTotalTime: newSrcTotalTime,
       saveTime: 0,
     });
   };
@@ -68,32 +56,28 @@ class Countdown extends React.Component {
   resetCountdown = () => {
     clearInterval(this.intervalId);
     this.setState({
-      totalValue: 0,
+      totalTime: 0,
+      srcTotalTime: 0,
       startTime: 0,
-      percent: 0,
-      minute: 0,
-      second: 0,
-      srcMinute: 0,
-      srcSecond: 0,
       isActive: false,
-      saveTime: 0,
+      saveTime: 0
     });
   };
 
   startCountdown = () => {
-    const { isActive, minute, second, totalValue, saveTime } = this.state;
+    const { isActive, srcTotalTime, totalTime, saveTime } = this.state;
     if (isActive) {
       clearInterval(this.intervalId);
       this.setState({
         isActive: false,
         startTime: 0,
-        saveTime: minute * 60 + second,
+        saveTime: totalTime,
       });
     } else {
       this.setState({
         isActive: true,
         startTime: Date.now(),
-        saveTime: saveTime || totalValue,
+        saveTime: saveTime || srcTotalTime,
       });
       this.intervalId = setInterval(this.tickCountdown, 1000);
     }
@@ -105,55 +89,60 @@ class Countdown extends React.Component {
   };
 
   tickCountdown = () => {
-    this.setState(({ startTime, totalValue, saveTime, srcMinute, srcSecond }) => {
-      const currentTime =
-        saveTime - Math.floor((Date.now() - startTime) / 1000);
+    this.setState(({ startTime, saveTime }) => {
+      const currentTime = saveTime - Math.floor(Date.now() - startTime);
       if (currentTime <= 0) {
         clearInterval(this.intervalId);
         this.playAudio();
         return {
-          minute: srcMinute,
-          second: srcSecond,
-          percent: 100,
-          isActive: false,
+          totalTime: 0,
+          isActive: false
         };
       }
-      const newPercent = Math.floor(
-        ((totalValue - currentTime) * 100) / totalValue
-      );
       return {
-        minute: Math.trunc(currentTime / 60),
-        second: currentTime % 60,
-        percent: newPercent,
+        totalTime: currentTime
       };
     });
   };
 
   render() {
     const {
-      minute,
-      second,
+      totalTime,
+      srcTotalTime,
       isActive,
-      percent,
-      srcMinute,
-      srcSecond,
     } = this.state;
+
+    const getMinute = (total) => {
+      return Math.trunc(total / 60000);
+    };
+
+    const getSecond = (total) => {
+      return Math.trunc((total / 1000) % 60);
+    };
+    const getPercent = (current, total) => {
+      return Math.floor(((total - current) * 100) / total);
+    };
+
     return (
       <>
         <FormInputNumber
           onChangeMin={this.onChangeMin}
           onChangeSec={this.onChangeSec}
           onChangeSlider={this.onChangeSlider}
-          minute={srcMinute}
-          second={srcSecond}
+          minute={getMinute(srcTotalTime)}
+          second={getSecond(srcTotalTime)}
           disabled={isActive}
         />
-        <ViewProgress minute={minute} second={second} percent={percent} />
+        <ViewProgress
+          minute={getMinute(totalTime)}
+          second={getSecond(totalTime)}
+          percent={getPercent(totalTime, srcTotalTime)}
+        />
         <Button
           type="primary"
           className="countdown-btn"
           onClick={this.startCountdown}
-          disabled={!(minute + second)}
+          disabled={!totalTime}
         >
           {isActive ? "Pause" : "Play"}
         </Button>
@@ -168,7 +157,5 @@ class Countdown extends React.Component {
     );
   }
 }
-
-
 
 export default Countdown;
