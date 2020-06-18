@@ -1,18 +1,16 @@
-/* eslint-disable react/require-default-props */
 import React from "react";
-import { InputNumber, Slider} from "antd";
+import { InputNumber, Slider } from "antd";
 import "./form-input-number.scss";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-export const FormInputNumber = (props) => {
-  const {
-    onChangeMin,
-    onChangeSec,
-    onChangeSlider,
-    minute,
-    second,
-    disabled,
-  } = props;
+export const FormInputNumber = ({
+  onChangeMin,
+  onChangeSec,
+  onChangeSlider,
+  minute,
+  second,
+  disabled,
+}) => {
   const sliderValue = minute * 60 + second;
   return (
     <>
@@ -56,14 +54,14 @@ export const FormInputNumber = (props) => {
 FormInputNumber.defaultProps = {
   minute: 0,
   second: 0,
-  disabled: false
+  disabled: false,
 };
 
 FormInputNumber.propTypes = {
-  onChangeMin: PropTypes.func,
-  onChangeSec: PropTypes.func,
-  onChangeSlider: PropTypes.func,
+  onChangeMin: PropTypes.func.isRequired,
+  onChangeSec: PropTypes.func.isRequired,
+  onChangeSlider: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
   minute: PropTypes.number,
-  second: PropTypes.number
-}
+  second: PropTypes.number,
+};

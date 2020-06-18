@@ -5,6 +5,16 @@ import { FormInputNumber } from "../form-input-number";
 import { ViewProgress } from "../view-progress";
 import countdownAudio from "./countdown.mp3";
 
+const MAX_MINUTES = 720;
+const GLOBAL_TICK = 50;
+
+const getMinute = (total) => Math.trunc(total / 60000);
+const getSecond = (total) => Math.ceil((total / 1000) % 60);
+const getPercent = (current, total) => Math.floor(((total - current) * 100) / total);
+const getOldSeconds = (srcTotalTime) => (srcTotalTime / 1000) % 60;
+const newTotalTimeForMinutes = (oldSeconds, minuts) => (minuts * 60 + oldSeconds) * 1000;
+const newTotalTimeForSeconds = (srcTotalTime, oldSeconds, seconds) => srcTotalTime + (seconds - oldSeconds) * 1000;
+
 export class Countdown extends React.Component {
   constructor(props) {
     super(props);
@@ -27,11 +37,10 @@ export class Countdown extends React.Component {
     });
   };
 
-  onChangeMin = (minuts) => {
-    if (Number.isNaN(minuts) || minuts > 720) return;
+  onChangeMin = (minutes) => {
+    if (Number.isNaN(minutes) || minutes > MAX_MINUTES) return;
     const { srcTotalTime } = this.state;
-    const second = (srcTotalTime / 1000) % 60;
-    const newTime = (minuts * 60 + second) * 1000;
+    const newTime = newTotalTimeForMinutes(getOldSeconds(srcTotalTime), minutes);
     this.setState({
       totalTime: newTime,
       srcTotalTime: newTime,
@@ -41,11 +50,10 @@ export class Countdown extends React.Component {
   onChangeSec = (second) => {
     if (Number.isNaN(second) || second > 59) return;
     const { srcTotalTime } = this.state;
-    const secondOld = (srcTotalTime / 1000) % 60;
-    const newSrcTotalTime = srcTotalTime + (second - secondOld) * 1000;
+    const newTime =  newTotalTimeForSeconds(srcTotalTime, getOldSeconds(srcTotalTime), second);
     this.setState({
-      totalTime: newSrcTotalTime,
-      srcTotalTime: newSrcTotalTime,
+      totalTime: newTime,
+      srcTotalTime: newTime,
     });
   };
 
@@ -70,7 +78,7 @@ export class Countdown extends React.Component {
         isActive: true,
         totalTime: totalTime || srcTotalTime,
       });
-      this.intervalId = setInterval(this.tickCountdown, 1000);
+      this.intervalId = setInterval(this.tickCountdown, GLOBAL_TICK);
     }
   };
 
@@ -81,7 +89,7 @@ export class Countdown extends React.Component {
 
   tickCountdown = () => {
     this.setState(({ totalTime }) => {
-      const currentTime = totalTime - 1000;
+      const currentTime = totalTime - GLOBAL_TICK;
       if (currentTime <= 0) {
         clearInterval(this.intervalId);
         this.playAudio();
@@ -98,17 +106,6 @@ export class Countdown extends React.Component {
 
   render() {
     const { totalTime, srcTotalTime, isActive } = this.state;
-
-    const getMinute = (total) => {
-      return Math.trunc(total / 60000);
-    };
-
-    const getSecond = (total) => {
-      return Math.ceil((total / 1000) % 60);
-    };
-    const getPercent = (current, total) => {
-      return Math.floor(((total - current) * 100) / total);
-    };
 
     return (
       <>
@@ -129,7 +126,7 @@ export class Countdown extends React.Component {
           type="primary"
           className="countdown-btn"
           onClick={this.startCountdown}
-          disabled={!(srcTotalTime)}
+          disabled={!srcTotalTime}
         >
           {isActive ? "Pause" : "Play"}
         </Button>

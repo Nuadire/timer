@@ -1,1 +1,1 @@
-export { ViewProgress } from "./view-progress";
+export * from "./view-progress";

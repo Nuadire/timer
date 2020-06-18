@@ -1,1 +1,1 @@
-export { FormInputNumber } from "./form-input-number";
+export * from "./form-input-number";

@@ -1,1 +1,1 @@
-export { Countdown } from "./countdown";
+export * from "./countdown";
