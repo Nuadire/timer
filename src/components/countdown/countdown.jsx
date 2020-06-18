@@ -3,6 +3,7 @@ import "./countdown.scss";
 import { Button } from "antd";
 import { FormInputNumber } from "../form-input-number";
 import { ViewProgress } from "../view-progress";
+import countdownAudio from "./countdown.mp3";
 
 export class Countdown extends React.Component {
   constructor(props) {
@@ -73,8 +74,8 @@ export class Countdown extends React.Component {
     }
   };
 
-  playAudio = (str = "countdown.mp3") => {
-    const audio = new Audio(str);
+  playAudio = () => {
+    const audio = new Audio(countdownAudio);
     audio.play();
   };
 
