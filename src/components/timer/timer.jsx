@@ -2,13 +2,17 @@ import React from "react";
 import { Button } from "antd";
 import "./timer.scss";
 
+const getMinutes = (timerValue) => Math.trunc(timerValue / 60000).toFixed(0);
+const getSeconds = (timerValue) => ((timerValue / 1000) % 60).toFixed(0);
+const getMs = (timerValue) => timerValue % 1000;
+
 export class Timer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       timerValue: 0,
-      timerCurrent: 0,
-      state: "inactive",
+      timeStart: 0,
+      state: "inactive"
     };
   }
 
@@ -17,14 +21,12 @@ export class Timer extends React.Component {
   }
 
   handleStart = () => {
-    const { state, timerValue, timerCurrent } = this.state;
+    const { state } = this.state;
 
     if (state === "active") {
       this.setState({
         state: "inactive",
-        timeStart: 0,
-        timerCurrent: 0,
-        timerValue: timerValue + timerCurrent,
+        timeStart: 0
       });
       clearInterval(this.timerId);
     } else {
@@ -42,28 +44,23 @@ export class Timer extends React.Component {
     clearInterval(this.timerId);
     this.setState({
       state: "inactive",
-      timerValue: 0,
-      timerCurrent: 0,
+      timerValue: 0
     });
   };
 
   tick() {
-    this.setState(({ timeStart }) => {
-      return { timerCurrent: Date.now() - timeStart };
+    this.setState(({ timeStart, timerValue }) => {
+      return { timerValue: Date.now() - timeStart + timerValue };
     });
   }
 
   render() {
-    const { state, timerCurrent, timerValue } = this.state;
-    const resultTimer = timerCurrent + timerValue;
+    const { state, timerValue } = this.state;
     const text = state === "active" ? "Pause" : "Start";
-    const mm = Math.trunc(resultTimer / 60000).toFixed(0);
-    const ss = ((resultTimer / 1000) % 60).toFixed(0);
-    const ms = (resultTimer % 1000).toFixed(0);
 
     return (
       <>
-        <div className="timer-view">{`${mm}min - ${ss}sec - ${ms}ms`}</div>
+        <div className="timer-view">{`${getMinutes(timerValue)}min - ${getSeconds(timerValue)}sec - ${getMs(timerValue)}ms`}</div>
         <Button className="timer-btn" onClick={this.handleStart} type="primary">
           {text}
         </Button>
